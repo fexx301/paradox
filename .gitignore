@@ -2,6 +2,8 @@ node_modules/
 *.log
 runs/raw/
 
+*.sqlite
+
 .projects/cache
 .projects/vault
 .projects/state.test.json
@@ -9,5 +11,3 @@ runs/raw/
 .env
 .env.*
 !.env.example
-.projects/state.local.json
-*.sqlite
