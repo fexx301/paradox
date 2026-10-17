@@ -44,10 +44,14 @@ LOGIN='H="content-type: application/json"; AA=localhost:3000/admin-api; curl -s 
 MODIFYING='curl -s -c /tmp/j -b /tmp/j -X POST -H "$H" -d "{\"query\":\"mutation{transitionOrderToState(id:$OID,state:\\\"Modifying\\\"){__typename}}\"}" $AA >/dev/null'
 CITY='curl -s -c /tmp/j -b /tmp/j -X POST -H "$H" -d "{\"query\":\"mutation{modifyOrder(input:{orderId:$OID,dryRun:false,updateBillingAddress:{city:\\\"Lagos\\\"}}){__typename ...on Order{totalWithTax discounts{amountWithTax}} ...on ErrorResult{errorCode}}}\"}" $AA'
 
-ready(){ # a fork can come up paused, and a just-resumed box can refuse exec briefly
-  for _ in 1 2 3 4 5 6 7 8 9 10; do
-    [ "$(status "$1")" = paused ] && createos sandbox resume "$1" >/dev/null 2>&1
-    inbox "$1" "$READY" && return 0; sleep 5
+ready(){ # a fork can come up paused or sit in "resuming" for minutes; wait up to 15 min
+  local t0=$SECONDS
+  while [ $((SECONDS - t0)) -lt 900 ]; do
+    case "$(status "$1")" in
+      running) inbox "$1" "$READY" && return 0 ;;
+      paused) createos sandbox resume "$1" >/dev/null 2>&1 & ;;   # don't block: resume calls can hang
+    esac
+    sleep 10
   done; return 1; }
 ready "$A" && ready "$B" || { echo "store not answering in a twin" >&2; exit 1; }
 
