@@ -50,7 +50,7 @@
 }
 *, *::before, *::after { box-sizing: border-box; }
 h2, .foot-statement { text-wrap: balance; }
-.headline span { display: block; }
+.headline span { display: block; text-wrap: balance; }
 p, li, dd { text-wrap: pretty; }
 html, body { overflow-x: clip; }
 body {
@@ -191,9 +191,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; bo
 
 /* Agent finding: secondary panel */
 .agent { padding-block: 0 var(--space-3xl); }
-.agent-panel { border: var(--rule); border-left: 3px solid var(--color-accent); border-radius: var(--radius-md); background: var(--color-paper-2); padding: var(--space-xl) var(--space-lg); display: grid; gap: var(--space-lg); }
+.agent-panel { border: var(--rule); border-radius: var(--radius-md); background: var(--color-paper-2); padding: var(--space-xl) var(--space-lg); display: grid; gap: var(--space-lg); }
 @media (min-width: 900px) { .agent-panel { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-2xl); padding: var(--space-2xl) var(--space-xl); } }
-.eyebrow-accent { color: var(--color-accent); }
+.eyebrow-accent { color: var(--color-accent); white-space: nowrap; }
+@media (max-width: 400px) { .eb-more { display: none; } }
 .agent h2 { font: 600 var(--text-2xl)/1.2 var(--font-display); letter-spacing: -0.015em; color: var(--color-ink); margin: var(--space-xs) 0 var(--space-md); max-width: 30ch; }
 .agent p { margin: 0; max-width: 54ch; }
 .agent .agent-fig { font: 600 var(--text-2xl)/1 var(--font-display); color: var(--color-accent); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 0 0 var(--space-lg); padding-bottom: var(--space-md); border-bottom: var(--rule); }
@@ -205,7 +206,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; bo
 .foot-grid { display: grid; gap: var(--space-xl); }
 @media (min-width: 900px) { .foot-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
 .foot-statement { font: 600 var(--text-2xl)/1.25 var(--font-display); color: var(--color-ink); margin: 0; max-width: 34ch; letter-spacing: -0.01em; }
-.foot-notes { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-xs); font-size: var(--text-sm); color: var(--color-muted); }
+.foot-notes { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2xs); align-content: start; font-size: var(--text-sm); color: var(--color-muted); }
 .foot-notes a { color: var(--color-ink); text-underline-offset: 3px; text-decoration-color: var(--color-rule-2); transition: text-decoration-color var(--dur-fast) var(--ease-out); }
 .foot-notes a:hover { text-decoration-color: var(--color-accent); }
 
@@ -308,7 +309,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; bo
     <div class="wrap">
       <div class="agent-panel">
         <div>
-          <span class="label eyebrow-accent">Second finding · live agent run</span>
+          <span class="label eyebrow-accent">Second finding<span class="eb-more"> · live agent run</span></span>
           <h2 id="agent-h">Nobody switched the promotion off. It simply expired.</h2>
           <p>An AI agent in twin B wrote and ran its own probe: a scheduled promotion ran out, then only the address on a paid order was edited, and the total rose from $1,397.12 to $1,407.92. Every figure was confirmed in the store's database.</p>
         </div>
