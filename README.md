@@ -23,6 +23,8 @@ Controls on twin A:
 
 So the address edit alone is harmless. The drift appears only when a promotion changes after payment, and legitimate edits still reprice correctly.
 
+The twin runner (`scripts/twins.sh`) then reproduced the same figures on fresh forks with no manual steps: [`runs/2026-10-17-twin-runner/results.json`](runs/2026-10-17-twin-runner/results.json).
+
 ## Second finding: the live agent run
 
 An AI agent (Opus 5.5 via OpenRouter, running Claude Code inside the CreateOS sandbox, 10 turns, 3 min 22 s) wrote and ran its own probe in twin B. A scheduled promotion expired, then only the address on a paid order was edited, and the total rose from **$1,397.12 to $1,407.92 (+$10.80)**. Nobody switched the promotion off. Its control edit before expiry left the total unchanged. The agent created its own scheduled promotions and that order as store data during the run. Every figure was checked against the store database: [`runs/2026-10-17-agent/VERIFIED.md`](runs/2026-10-17-agent/VERIFIED.md).

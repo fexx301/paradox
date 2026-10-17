@@ -1,0 +1,69 @@
+{
+  "order": "4WQVKNWLNGQ5TFV6",
+  "source_sandbox": "sb-01m55s7v3a7y8mhyvtdh0sfew3",
+  "paid_total_cents": 33980,
+  "twin_a": {
+    "sandbox": "sb-01m55zzdp375h36jakax7nqbk6",
+    "fork_seconds": 93,
+    "action": "none",
+    "total_cents": 33980
+  },
+  "twin_b": {
+    "sandbox": "sb-01m5612nag6dfshd1pmt4j0xyz",
+    "fork_seconds": 265,
+    "action": "promotion disabled after payment, then billing city only",
+    "state": "Modifying",
+    "total_cents": 37700,
+    "drift_cents": 3720
+  },
+  "controls": {
+    "no_drift": {
+      "action": "billing city only, promotion on",
+      "total_cents": 33980,
+      "verdict": "pass"
+    },
+    "eligible_promotion": {
+      "action": "dry run, quantity +1",
+      "total_cents": 67460,
+      "discount_cents": -7440,
+      "verdict": "pass"
+    }
+  },
+  "raw": {
+    "b_edit": {
+      "data": {
+        "modifyOrder": {
+          "__typename": "Order",
+          "totalWithTax": 37700,
+          "discounts": []
+        }
+      }
+    },
+    "a_city": {
+      "data": {
+        "modifyOrder": {
+          "__typename": "Order",
+          "totalWithTax": 33980,
+          "discounts": [
+            {
+              "amountWithTax": -3720
+            }
+          ]
+        }
+      }
+    },
+    "a_quantity": {
+      "data": {
+        "modifyOrder": {
+          "__typename": "Order",
+          "totalWithTax": 67460,
+          "discounts": [
+            {
+              "amountWithTax": -7440
+            }
+          ]
+        }
+      }
+    }
+  }
+}
