@@ -131,6 +131,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; bo
 .lines .gone { background: var(--color-accent-soft); margin-inline: calc(-1 * var(--space-xs)); padding-inline: var(--space-xs); border-radius: 4px; }
 .lines .gone dd { color: var(--color-accent); font-weight: 600; }
 .lines .gone s { color: var(--color-muted); font-weight: 400; margin-right: var(--space-xs); }
+@media (max-width: 359px) { .lines .gone s { display: none; } }
+.lines dt, .lines dd { white-space: nowrap; }
 .total { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-md); margin-top: var(--space-lg); }
 .total .label { color: var(--color-ink-2); }
 .total-num { font: 600 var(--text-2xl)/1 var(--font-display); color: var(--color-ink); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
