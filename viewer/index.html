@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paradox Twin Receipts</title>
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1c1c1c; --muted:#6b6b6b; --line:#e2e0da; --bad:#b42318; --ok:#1a7f37; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141414; --card:#1e1e1e; --ink:#ececec; --muted:#9a9a9a; --line:#333; --bad:#f97066; --ok:#4ac26b; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, sans-serif; }
+  main { max-width:960px; margin:0 auto; padding:32px 16px 48px; }
+  h1 { font-size:28px; margin:0 0 4px; }
+  .sub { color:var(--muted); margin:0 0 28px; }
+  .twins { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px) { .twins { grid-template-columns:1fr; } }
+  .receipt { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .receipt h2 { font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 12px; }
+  .row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed var(--line); font-variant-numeric:tabular-nums; }
+  .row:last-of-type { border-bottom:0; }
+  .total { font-size:32px; font-weight:700; margin-top:14px; font-variant-numeric:tabular-nums; }
+  .b .total { color:var(--bad); }
+  .note { color:var(--muted); font-size:14px; margin-top:8px; }
+  .delta { margin:20px 0 32px; padding:16px 20px; border-left:4px solid var(--bad); background:var(--card); border-radius:6px; }
+  .delta strong { color:var(--bad); }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; }
+  .pass { color:var(--ok); font-weight:600; }
+  code { font-size:13px; }
+  footer { color:var(--muted); font-size:13px; margin-top:28px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Paradox: twin receipts</h1>
+  <p class="sub">Order <code>4WQVKNWLNGQ5TFV6</code>, Vendure 3.7.3. Paid $339.80 with an automatic 10% promotion. One store, frozen at the paid moment, forked twice on CreateOS.</p>
+
+  <section class="twins">
+    <div class="receipt a">
+      <h2>Twin A: no edit</h2>
+      <div class="row"><span>State</span><span>PaymentSettled</span></div>
+      <div class="row"><span>Promotion</span><span>enabled</span></div>
+      <div class="row"><span>Discount</span><span>−$37.20</span></div>
+      <div class="total">$339.80</div>
+      <p class="note">What the customer paid.</p>
+    </div>
+    <div class="receipt b">
+      <h2>Twin B: promotion off, billing city edited</h2>
+      <div class="row"><span>State</span><span>Modifying</span></div>
+      <div class="row"><span>Promotion</span><span>disabled after payment</span></div>
+      <div class="row"><span>Discount</span><span>none</span></div>
+      <div class="total">$377.00</div>
+      <p class="note">Only the billing city changed on the order.</p>
+    </div>
+  </section>
+
+  <p class="delta">The paid total moved <strong>+$37.20</strong>, exactly the discount the customer received, after an edit that should not affect price.</p>
+
+  <table>
+    <thead><tr><th>Control (twin A)</th><th>Action</th><th>Result</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>No drift</td><td>Billing-city-only edit, promotion still enabled</td><td>$339.80, discount kept</td><td class="pass">pass</td></tr>
+      <tr><td>Eligible promotion</td><td>Dry run: line quantity 1 → 2</td><td>$674.60, discount −$74.40</td><td class="pass">pass</td></tr>
+    </tbody>
+  </table>
+
+  <footer>Known defect class: public Vendure issue #5356. Twins are CreateOS sandbox forks; the Vendure process kept running through each fork. Raw results: <code>runs/2026-10-17-twins.md</code>.</footer>
+</main>
+</body>
+</html>
