@@ -5,6 +5,7 @@
 # controls in A, and writes results.json. Exit 0 = drift reproduced and controls pass.
 #
 #   scripts/twins.sh <paused-store-sandbox-id> [order-code]
+#   TWIN_A=<id> TWIN_B=<id> scripts/twins.sh …   reuse twins already forked from that store
 #
 # Needs: createos CLI signed in (Beginner plan: the store plus two forks), jq.
 set -euo pipefail
@@ -30,11 +31,15 @@ fork(){ # fork paused (the auto-resume can stall), then resume explicitly; print
   echo "$id $((SECONDS - t0))"
 }
 
-echo "forking twins from ${SRC}…" >&2
-fork > "$OUT/.a" & PA=$!
-fork > "$OUT/.b" & PB=$!
-wait $PA && wait $PB
-read -r A FA < "$OUT/.a"; read -r B FB < "$OUT/.b"; rm -f "$OUT/.a" "$OUT/.b"
+if [ -n "${TWIN_A:-}" ] && [ -n "${TWIN_B:-}" ]; then   # reuse twins forked earlier from the same paused store
+  A=$TWIN_A B=$TWIN_B FA=${FORK_A_S:-null} FB=${FORK_B_S:-null}
+else
+  echo "forking twins from ${SRC}…" >&2
+  fork > "$OUT/.a" & PA=$!
+  fork > "$OUT/.b" & PB=$!
+  wait $PA && wait $PB
+  read -r A FA < "$OUT/.a"; read -r B FB < "$OUT/.b"; rm -f "$OUT/.a" "$OUT/.b"
+fi
 echo "twin A $A (${FA}s) · twin B $B (${FB}s)" >&2
 
 READY='for i in $(seq 1 60); do c=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "content-type: application/json" -d "{\"query\":\"{products(options:{take:1}){totalItems}}\"}" localhost:3000/shop-api); [ "$c" = 200 ] && exit 0; sleep 3; done; exit 1'
@@ -43,7 +48,11 @@ LOGIN='H="content-type: application/json"; AA=localhost:3000/admin-api; curl -s 
 MODIFYING='curl -s -c /tmp/j -b /tmp/j -X POST -H "$H" -d "{\"query\":\"mutation{transitionOrderToState(id:$OID,state:\\\"Modifying\\\"){__typename}}\"}" $AA >/dev/null'
 CITY='curl -s -c /tmp/j -b /tmp/j -X POST -H "$H" -d "{\"query\":\"mutation{modifyOrder(input:{orderId:$OID,dryRun:false,updateBillingAddress:{city:\\\"Lagos\\\"}}){__typename ...on Order{totalWithTax discounts{amountWithTax}} ...on ErrorResult{errorCode}}}\"}" $AA'
 
-ready(){ for _ in 1 2 3 4 5 6 7 8 9 10; do inbox "$1" "$READY" && return 0; sleep 5; done; return 1; }   # a just-resumed box can refuse exec briefly
+ready(){ # a fork can come up paused, and a just-resumed box can refuse exec briefly
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    [ "$(status "$1")" = paused ] && createos sandbox resume "$1" >/dev/null 2>&1
+    inbox "$1" "$READY" && return 0; sleep 5
+  done; return 1; }
 ready "$A" && ready "$B" || { echo "store not answering in a twin" >&2; exit 1; }
 
 # Twins must start identical, or a difference proves nothing.
