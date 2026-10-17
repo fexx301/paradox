@@ -8,7 +8,7 @@ Read directly from twin B's database (`sb-01m55wj8hdw4sz0jgs07zen29e`), independ
 | Order 4 current total | $1,407.92 |
 | Settled payments on order 4 | $1,397.12 |
 | Outstanding | $10.80 |
-| Promotions 2 and 3 | disabled by expiry (`endsAt` 22:09:51 and 22:10:10 UTC) |
+| Promotions 2 and 3 | expired at `endsAt` 22:09:51 and 22:10:10 UTC; now `enabled = 0` only because the agent's cleanup step disabled them **after** the drift was recorded (`findings/repro.mjs` lines 99–100; `findings/run1.log` line 207) |
 | Modifications on order 4 | 2 (the pre-expiry control edit, then the post-expiry address edit) |
 | Earlier order `4WQVKNWLNGQ5TFV6` | untouched, PaymentSettled, $339.80 |
 
