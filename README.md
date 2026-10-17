@@ -23,7 +23,11 @@ Controls on twin A:
 
 So the address edit alone is harmless. The drift appears only when a promotion changes after payment, and legitimate edits still reprice correctly.
 
-Raw results: [`runs/2026-10-17-twins.md`](runs/2026-10-17-twins.md). Viewer: [`viewer/index.html`](viewer/index.html).
+## Second finding: the live agent run
+
+An AI agent (Opus 5.5 via OpenRouter, running Claude Code inside the CreateOS sandbox, 10 turns, 3 min 22 s) wrote and ran its own probe in twin B. A scheduled promotion expired, then only the address on a paid order was edited, and the total rose from **$1,397.12 to $1,407.92 (+$10.80)**. Nobody switched the promotion off. Its control edit before expiry left the total unchanged. The agent created its own scheduled promotions and that order as store data during the run. Every figure was checked against the store database: [`runs/2026-10-17-agent/VERIFIED.md`](runs/2026-10-17-agent/VERIFIED.md).
+
+Raw results: [`runs/2026-10-17-twins.md`](runs/2026-10-17-twins.md), [`runs/2026-10-17-agent/`](runs/2026-10-17-agent/). Viewer: [`viewer/index.html`](viewer/index.html).
 
 This is a known defect class, public Vendure issue [#5356](https://github.com/vendurehq/vendure/issues/5356). Paradox's contribution is a reproducible way to prove it, not the discovery.
 
@@ -34,7 +38,7 @@ This is a known defect class, public Vendure issue [#5356](https://github.com/ve
 
 ## Honest notes
 
-- The twin and control steps in `runs/` were run by hand through Vendure's Admin API. The agent run inside the sandbox is recorded separately.
+- The first twin comparison and its controls were run by hand through Vendure's Admin API. The second finding came from the agent's own run; its task was written by a person, and its claims were checked against the store.
 - The test orders were placed with a second AI agent through the store's dashboard and APIs, then verified against the store database.
 - Payments use Vendure's built-in test payment handler; no real money moves.
 - A fork of this 4 GB box took 4–8 minutes, so twins are created before recording.
