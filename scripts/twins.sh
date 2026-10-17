@@ -30,7 +30,7 @@ fork(){ # fork paused (the auto-resume can stall), then resume explicitly; print
   echo "$id $((SECONDS - t0))"
 }
 
-echo "forking twins from $SRC…" >&2
+echo "forking twins from ${SRC}…" >&2
 fork > "$OUT/.a" & PA=$!
 fork > "$OUT/.b" & PB=$!
 wait $PA && wait $PB
