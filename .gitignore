@@ -9,3 +9,5 @@ runs/raw/
 .env
 .env.*
 !.env.example
+.projects/state.local.json
+*.sqlite
