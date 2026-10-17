@@ -11,3 +11,5 @@ runs/raw/
 !.env.example
 .projects/state.local.json
 *.sqlite
+.projects/state.local.json
+*.sqlite
