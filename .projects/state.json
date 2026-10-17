@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "providers": {
+    "createos": {
+      "name": "createos"
+    }
+  },
+  "resources": {
+    "createos-plan": {
+      "livemode": true,
+      "name": "createos-plan",
+      "providerName": "createos",
+      "serviceId": "free"
+    },
+    "createos-project": {
+      "livemode": true,
+      "name": "createos-project",
+      "providerName": "createos",
+      "serviceId": "project"
+    }
+  },
+  "environments": {
+    "default": {
+      "output": ".env",
+      "resources": [
+        {
+          "resourceName": "createos-plan"
+        },
+        {
+          "resourceName": "createos-project"
+        }
+      ],
+      "variables": [
+        {
+          "variableName": "openrouter",
+          "envKey": "OPENROUTER_API_KEY"
+        }
+      ]
+    }
+  },
+  "variables": {
+    "openrouter": {
+      "name": "openrouter",
+      "backendId": "fprjvar_61Vb1Rwd6rtjilLtw16VZkXH0cSQo1JtgGfdRUKGW9vs"
+    }
+  }
+}
