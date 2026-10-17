@@ -1,0 +1,9 @@
+{
+  "name": "paradox-viewer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"static page, nothing to build\"",
+    "start": "node server.mjs"
+  }
+}
