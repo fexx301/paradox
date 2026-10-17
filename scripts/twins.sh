@@ -5,7 +5,7 @@
 # controls in A, and writes results.json. Exit 0 = drift reproduced and controls pass.
 #
 #   scripts/twins.sh <paused-store-sandbox-id> [order-code]
-#   TWIN_A=<id> TWIN_B=<id> scripts/twins.sh …   reuse twins already forked from that store
+#   TWIN_A=<id> [TWIN_B=<id>] scripts/twins.sh …   reuse twins already forked from that store
 #
 # Needs: createos CLI signed in (Beginner plan: the store plus two forks), jq.
 set -euo pipefail
@@ -31,15 +31,11 @@ fork(){ # fork paused (the auto-resume can stall), then resume explicitly; print
   echo "$id $((SECONDS - t0))"
 }
 
-if [ -n "${TWIN_A:-}" ] && [ -n "${TWIN_B:-}" ]; then   # reuse twins forked earlier from the same paused store
-  A=$TWIN_A B=$TWIN_B FA=${FORK_A_S:-null} FB=${FORK_B_S:-null}
-else
-  echo "forking twins from ${SRC}…" >&2
-  fork > "$OUT/.a" & PA=$!
-  fork > "$OUT/.b" & PB=$!
-  wait $PA && wait $PB
-  read -r A FA < "$OUT/.a"; read -r B FB < "$OUT/.b"; rm -f "$OUT/.a" "$OUT/.b"
-fi
+# One fork at a time: parallel forks of the same store left a twin that would not resume.
+# TWIN_A / TWIN_B reuse a twin already forked from this same paused store.
+if [ -n "${TWIN_A:-}" ]; then A=$TWIN_A FA=${FORK_A_S:-null}; else echo "forking twin A from ${SRC}…" >&2; read -r A FA < <(fork); fi
+if [ -n "${TWIN_B:-}" ]; then B=$TWIN_B FB=${FORK_B_S:-null}; else echo "forking twin B from ${SRC}…" >&2; read -r B FB < <(fork); fi
+[ -n "${A:-}" ] && [ -n "${B:-}" ] || { echo "fork failed" >&2; exit 1; }
 echo "twin A $A (${FA}s) · twin B $B (${FB}s)" >&2
 
 READY='for i in $(seq 1 60); do c=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "content-type: application/json" -d "{\"query\":\"{products(options:{take:1}){totalItems}}\"}" localhost:3000/shop-api); [ "$c" = 200 ] && exit 0; sleep 3; done; exit 1'
